@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contestamos tu WhatsApp cuando tú no puedes | Recepción IA</title>
+<meta name="description" content="Asistente de WhatsApp con IA para negocios locales: contesta fuera de horario, resuelve preguntas frecuentes, toma datos para cita o cotización y te pasa al cliente cuando no sabe.">
+<style>
+:root{
+  --crema:#fbf5ea; --papel:#fffdf8; --tinta:#2a211b; --suave:#6b5d52; --linea:#e7dccb;
+  --terracota:#c4552d; --terracota-osc:#9f401f; --verde:#1f6b4f; --verde-claro:#dcefe5; --arena:#f1e4cc;
+  --wa-fondo:#e9dfd0; --wa-out:#d9fdd3; --wa-in:#ffffff; --wa-barra:#075e54;
+  --radio:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--crema);color:var(--tinta);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.15;margin:0 0 .5em;font-weight:700}
+h1{font-size:clamp(2.1rem,6vw,3.5rem);letter-spacing:-.02em}
+h2{font-size:clamp(1.7rem,4.2vw,2.5rem);letter-spacing:-.01em}
+h3{font-size:1.25rem}
+p{margin:0 0 1em}
+a{color:var(--terracota-osc)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+section{padding:64px 0}
+.eyebrow{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--terracota-osc);font-weight:700;margin-bottom:.8rem}
+.btn{display:inline-block;padding:14px 22px;border-radius:999px;font-weight:700;text-decoration:none;border:2px solid transparent;cursor:pointer;font-size:1rem;font-family:inherit}
+.btn-wa{background:var(--verde);color:#fff}.btn-wa:hover{background:#17533c}
+.btn-line{border-color:var(--tinta);color:var(--tinta);background:transparent}.btn-line:hover{background:var(--tinta);color:var(--crema)}
+.skip{position:absolute;left:-999px}.skip:focus{left:10px;top:10px;background:#fff;padding:8px;z-index:9}
+:focus-visible{outline:3px solid var(--terracota);outline-offset:2px}
+
+header.top{padding:18px 0}
+header.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-family:Georgia,serif;font-weight:700;font-size:1.2rem;text-decoration:none;color:var(--tinta)}
+.logo span{color:var(--terracota)}
+.hero{padding:28px 0 56px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero p.lead{font-size:1.2rem;color:var(--suave);max-width:34em}
+.hero .acciones{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 10px}
+.nota{font-size:.88rem;color:var(--suave)}
+.reloj{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);padding:22px;box-shadow:0 12px 30px -18px rgba(80,50,20,.45)}
+.reloj .hora{font-family:Georgia,serif;font-size:.9rem;color:var(--suave);margin-bottom:10px}
+.burbuja{max-width:85%;padding:9px 13px;border-radius:12px;margin:8px 0;font-size:.95rem;line-height:1.4}
+.burbuja.in{background:var(--arena);border-top-left-radius:2px}
+.burbuja.sin{background:transparent;border:1px dashed var(--terracota);color:var(--terracota-osc);font-style:italic;max-width:100%}
+
+.problema{background:var(--tinta);color:var(--crema)}
+.problema h2{color:#fff}
+.problema p{color:#e9dccb;max-width:40em}
+.problema .eyebrow{color:#f0a98a}
+
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);padding:24px}
+.card .num{font-family:Georgia,serif;font-size:2.4rem;color:var(--terracota);line-height:1}
+.hace{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.hace .card{display:flex;gap:14px}
+.hace .ico{font-size:1.6rem}
+.hace h3{margin-bottom:.2em}.hace p{margin:0;color:var(--suave);font-size:.97rem}
+
+/* Demo */
+.demo{background:var(--arena)}
+.demo-box{display:grid;grid-template-columns:.8fr 1.2fr;gap:32px;align-items:start}
+.giros{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.giro{display:flex;align-items:center;gap:12px;text-align:left;background:var(--papel);border:2px solid var(--linea);border-radius:14px;padding:12px 16px;font:inherit;cursor:pointer;color:var(--tinta)}
+.giro[aria-pressed="true"]{border-color:var(--terracota);background:#fff}
+.giro .e{font-size:1.5rem}
+.sugs{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.sug{border:1px solid var(--terracota);color:var(--terracota-osc);background:transparent;border-radius:999px;padding:6px 12px;font:inherit;font-size:.88rem;cursor:pointer}
+.sug:hover{background:var(--terracota);color:#fff}
+.aviso{background:#fff3d6;border:1px solid #e8c978;border-radius:12px;padding:12px 14px;font-size:.9rem;margin-top:16px}
+.tel{background:#000;border-radius:28px;padding:10px;max-width:420px;margin-left:auto;box-shadow:0 20px 40px -20px rgba(0,0,0,.6)}
+.pantalla{background:var(--wa-fondo);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;height:560px}
+.barra{background:var(--wa-barra);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:#fff3;display:grid;place-items:center;font-size:1.2rem}
+.barra b{display:block;font-size:.98rem;line-height:1.2}.barra small{opacity:.85;font-size:.75rem}
+.msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
+.m{max-width:82%;padding:8px 11px;border-radius:10px;font-size:.93rem;line-height:1.4;white-space:pre-wrap;box-shadow:0 1px 1px rgba(0,0,0,.12);word-wrap:break-word}
+.m.bot{background:var(--wa-in);align-self:flex-start;border-top-left-radius:2px}
+.m.yo{background:var(--wa-out);align-self:flex-end;border-top-right-radius:2px}
+.m.sys{align-self:center;background:#fff8c5;font-size:.8rem;text-align:center;max-width:92%;color:#5b4b00}
+.m.sys.ok{background:#d6f2e2;color:#14452f}
+.escribiendo{align-self:flex-start;background:#fff;border-radius:10px;padding:8px 12px;font-size:.85rem;color:var(--suave)}
+.entrada{display:flex;gap:8px;padding:10px;background:#f0e9de}
+.entrada input{flex:1;border:0;border-radius:999px;padding:11px 16px;font:inherit;font-size:.95rem;min-width:0}
+.entrada button{border:0;border-radius:50%;width:44px;height:44px;background:var(--wa-barra);color:#fff;font-size:1.1rem;cursor:pointer}
+
+.pasos{counter-reset:p;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.paso{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);padding:24px;position:relative}
+.paso::before{counter-increment:p;content:counter(p);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--terracota);color:#fff;font-family:Georgia,serif;font-weight:700;margin-bottom:12px}
+.paso p{color:var(--suave);margin:0}
+
+.precios{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+.precio{background:var(--papel);border:2px solid var(--tinta);border-radius:var(--radio);padding:28px}
+.precio .monto{font-family:Georgia,serif;font-size:2.4rem;line-height:1.1}
+.precio .monto small{font-size:1rem;font-family:system-ui,sans-serif;color:var(--suave)}
+.precio ul{padding-left:1.1em;margin:14px 0}.precio li{margin:.35em 0}
+.promo{background:var(--verde-claro);border:2px dashed var(--verde);border-radius:var(--radio);padding:24px}
+.promo h3{color:var(--verde)}
+
+details{background:var(--papel);border:1px solid var(--linea);border-radius:12px;padding:0 18px;margin-bottom:10px}
+summary{cursor:pointer;padding:16px 0;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--terracota);font-size:1.4rem;line-height:1}
+details[open] summary::after{content:"–"}
+details p{color:var(--suave)}
+
+.cta{background:var(--terracota);color:#fff;text-align:center}
+.cta h2{color:#fff}.cta a{color:#fff}
+.cta .btn-wa{background:#fff;color:var(--verde)}
+.cta .acciones{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.cta .btn-line{border-color:#fff;color:#fff}.cta .btn-line:hover{background:#fff;color:var(--terracota-osc)}
+footer{padding:30px 0;font-size:.85rem;color:var(--suave)}
+
+@media(max-width:860px){
+  .hero-grid,.demo-box,.precios{grid-template-columns:1fr}
+  .cols3,.pasos,.hace{grid-template-columns:1fr}
+  .tel{margin:0 auto}
+  section{padding:48px 0}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#demo">Ir a la demo</a>
+
+<header class="top"><div class="wrap">
+  <a class="logo" href="#">Recepción<span> IA</span></a>
+  <a class="btn btn-wa" href="#contacto" style="padding:10px 18px;font-size:.92rem">Escríbenos</a>
+</div></header>
+
+<main>
+<section class="hero"><div class="wrap hero-grid">
+  <div>
+    <div class="eyebrow">Para negocios locales en México</div>
+    <h1>Tu WhatsApp contesta aunque tú estés dormido.</h1>
+    <p class="lead">Un asistente que responde las preguntas de siempre (horarios, precios, ubicación), toma los datos para una cita o cotización y, cuando no sabe, te avisa y te deja la conversación a ti.</p>
+    <div class="acciones">
+      <a class="btn btn-wa" href="#demo">Pruébalo ahora, sin registrarte</a>
+      <a class="btn btn-line" href="#precios">Ver precios</a>
+    </div>
+    <p class="nota">Hecho en Mazatlán. Instalación acompañada, sin contratos forzosos.</p>
+  </div>
+  <div class="reloj" aria-hidden="true">
+    <div class="hora">Martes, 10:42 p. m.</div>
+    <div class="burbuja in">Hola, ¿cuánto cuesta limpiar un minisplit? ¿Pueden mañana?</div>
+    <div class="burbuja sin">Sin respuesta. Mañana ya le escribió a otro negocio.</div>
+    <div class="hora" style="margin-top:14px">Con Recepción IA, 10:42 p. m.</div>
+    <div class="burbuja in" style="background:var(--wa-out)">Desde $650 (precio de ejemplo). ¿Te aparto una visita? ¿Cómo te llamas?</div>
+  </div>
+</div></section>
+
+<section class="problema"><div class="wrap">
+  <div class="eyebrow">El problema</div>
+  <h2>Un cliente que escribe y no recibe respuesta, se va con el siguiente.</h2>
+  <p>La gente escribe de noche, en domingo o cuando tú estás con las manos ocupadas: debajo de un coche, atendiendo a un paciente, en una instalación. Quien pregunta por WhatsApp espera una respuesta rápida, y si no llega, pregunta en otro lado.</p>
+  <p>No necesitas contestar a las 11 de la noche. Necesitas que alguien conteste por ti, que tome los datos y que tú retomes en la mañana con todo ya anotado.</p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Qué hace</div>
+  <h2>Una recepcionista que no se cansa, pero que sabe cuándo llamarte.</h2>
+  <div class="hace">
+    <div class="card"><div class="ico">🌙</div><div><h3>Contesta fuera de horario</h3><p>De noche, en fin de semana y cuando estás ocupado.</p></div></div>
+    <div class="card"><div class="ico">💬</div><div><h3>Resuelve lo de siempre</h3><p>Horarios, precios, ubicación, servicios, formas de pago: con la información que tú le des.</p></div></div>
+    <div class="card"><div class="ico">📝</div><div><h3>Toma datos para cita o cotización</h3><p>Nombre, servicio, día y hora preferida. Tú recibes la solicitud ya ordenada.</p></div></div>
+    <div class="card"><div class="ico">🙋</div><div><h3>Te pasa al cliente cuando no sabe</h3><p>Si la pregunta es rara, urgente o el cliente está molesto, no inventa: te avisa y deja el chat para ti. Es lo que más cuidamos.</p></div></div>
+  </div>
+</div></section>
+
+<section class="demo" id="demo"><div class="wrap">
+  <div class="eyebrow">Pruébalo tú mismo</div>
+  <h2>Elige un giro y escríbele al asistente.</h2>
+  <div class="demo-box">
+    <div>
+      <p>Así se siente tu cliente al escribirle a un negocio con asistente. Prueba preguntar horarios, precios, agendar una cita, o algo que no entienda.</p>
+      <div class="giros" id="giros" role="group" aria-label="Elige un giro"></div>
+      <div><strong style="font-size:.9rem">Prueba con:</strong><div class="sugs" id="sugs"></div></div>
+      <div class="aviso"><strong>Es una demostración simplificada.</strong> Este chat funciona con reglas básicas dentro de tu navegador: no usa IA, no guarda nada y no envía mensajes a nadie. El producto real usa IA, entiende mucho mejor cómo escribe la gente y usa los datos reales de tu negocio. Los precios que verás son de ejemplo.</div>
+    </div>
+    <div class="tel">
+      <div class="pantalla">
+        <div class="barra"><div class="avatar" id="av">💬</div><div><b id="nombreNeg">Elige un giro</b><small>demostración · en línea</small></div></div>
+        <div class="msgs" id="msgs" aria-live="polite"></div>
+        <form class="entrada" id="form" autocomplete="off">
+          <input id="txt" type="text" placeholder="Escribe un mensaje" aria-label="Escribe un mensaje" maxlength="200">
+          <button type="submit" aria-label="Enviar">➤</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Cómo se instala</div>
+  <h2>Tres pasos, y tú casi no haces nada técnico.</h2>
+  <div class="pasos">
+    <div class="paso"><h3>Nos cuentas tu negocio</h3><p>Llenas un cuestionario corto: horarios, servicios, precios y las preguntas que más te hacen.</p></div>
+    <div class="paso"><h3>Lo armamos y lo pruebas</h3><p>Configuramos el asistente con tu información y lo pruebas tú mismo. Incluye dos rondas de cambios.</p></div>
+    <div class="paso"><h3>Lo conectamos a tu WhatsApp</h3><p>Lo activamos en un número de WhatsApp Business y te mostramos cómo retomar las conversaciones cuando te avise.</p></div>
+  </div>
+</div></section>
+
+<section id="precios" style="background:var(--papel);border-block:1px solid var(--linea)"><div class="wrap">
+  <div class="eyebrow">Precios</div>
+  <h2>Un precio claro, sin letra chiquita escondida.</h2>
+  <div class="precios">
+    <div class="precio">
+      <h3>Asistente de WhatsApp</h3>
+      <div class="monto">desde $5,500 <small>MXN, instalación única</small></div>
+      <div class="monto" style="font-size:1.7rem;margin-top:6px">+ desde $900 <small>MXN al mes</small></div>
+      <ul>
+        <li>Configuración con la información de tu negocio</li>
+        <li>Toma de datos para citas o cotizaciones</li>
+        <li>Paso a una persona cuando no sabe</li>
+        <li>Dos rondas de cambios incluidas</li>
+        <li>Anticipo del 50% para empezar</li>
+      </ul>
+      <p class="nota">El precio final depende de qué tanto haya que configurar. Meta (WhatsApp) cobra aparte si pasas de 1,000 conversaciones al mes; revisa las preguntas frecuentes.</p>
+      <a class="btn btn-wa" href="#contacto">Pedir mi cotización</a>
+    </div>
+    <div class="promo">
+      <h3>Promo de arranque</h3>
+      <p><strong>20% de descuento a los primeros 3 clientes</strong>, a cambio de una reseña honesta cuando el asistente ya esté funcionando.</p>
+      <p class="nota">Es una promoción limitada. Si no te convence el resultado, la reseña también puede decirlo.</p>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap" style="max-width:760px">
+  <div class="eyebrow">Preguntas frecuentes</div>
+  <h2>Lo que conviene saber antes de decidir.</h2>
+  <details><summary>¿La IA puede equivocarse?</summary><p>Sí. Ningún asistente es perfecto. Por eso se configura con tu información real, se prueba contigo antes de activarlo y tiene reglas claras de cuándo pasarte la conversación en lugar de adivinar.</p></details>
+  <details><summary>¿Qué pasa si la IA no sabe qué contestar?</summary><p>No inventa. Le avisa al cliente que lo atenderá una persona y te marca la conversación para que la retomes. Esto aplica también con clientes molestos o temas urgentes.</p></details>
+  <details><summary>¿Qué NO hace?</summary><p>No da diagnósticos médicos ni mecánicos, no cierra ventas complicadas, no cobra ni maneja pagos por ti, no negocia precios y no reemplaza tu atención personal. Es una recepción: contesta lo básico, toma datos y te lleva al cliente.</p></details>
+  <details><summary>¿Cuánto cobra Meta por WhatsApp?</summary><p>Meta cobra por separado a través de la plataforma de WhatsApp Business. Por lo que verificamos en su documentación, los primeros 1,000 mensajes de servicio al mes por número son gratis; después se cobran por mensaje, y hay tarifas distintas si el negocio inicia la conversación con plantillas. Las tarifas cambian, así que te damos la cifra vigente por escrito antes de empezar.</p></details>
+  <details><summary>¿Tengo que cambiar mi número de WhatsApp?</summary><p>El asistente corre sobre la API de WhatsApp Business, que necesita un número que no esté usando la app normal al mismo tiempo. Lo platicamos al inicio para elegir lo más cómodo para ti; no te prometemos nada hasta revisar tu caso.</p></details>
+  <details><summary>¿Cuánto tarda en estar listo?</summary><p>Depende de qué tan rápido nos mandes tu información y de la verificación de tu cuenta con Meta, que no controlamos. Te damos un estimado al revisar tu caso.</p></details>
+  <details><summary>¿Hay contrato forzoso?</summary><p>Hay un acuerdo sencillo por escrito con el alcance, las dos rondas de cambios, el anticipo y la mensualidad. Si quieres cancelar la mensualidad, lo dejamos de cobrar.</p></details>
+  <details><summary>¿Quién está detrás?</summary><p>Jesús Rodríguez, estudiante de Ingeniería en Sistemas en Mazatlán, que trabaja en automatización e IA. Ha construido un asistente de WhatsApp para un negocio de aire acondicionado y de ahí aprendió lo más importante: saber cuándo pasar con una persona.</p></details>
+</div></section>
+
+<section class="cta" id="contacto"><div class="wrap">
+  <h2>¿Te late? Platiquemos de tu negocio.</h2>
+  <p>Cuéntanos a qué te dedicas y vemos si tiene sentido para ti. Sin compromiso.</p>
+  <div class="acciones">
+    <a class="btn btn-wa" id="waBtn" href="https://wa.me/526695939300?text=Hola%2C%20vi%20Recepci%C3%B3n%20IA%20y%20me%20interesa%20un%20asistente%20de%20WhatsApp%20para%20mi%20negocio.%20Mi%20giro%20es%3A%20" rel="noopener">Escríbenos por WhatsApp</a>
+    <a class="btn btn-line" href="mailto:bussnestjesus2005@gmail.com?subject=Asistente%20de%20WhatsApp%20para%20mi%20negocio">bussnestjesus2005@gmail.com</a>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+  <p>Recepción IA · Mazatlán, Sinaloa. Los precios son "desde" y en pesos mexicanos; la cotización final se da por escrito. Los precios y nombres que aparecen en la demo son ejemplos inventados. WhatsApp es marca de Meta; este servicio es independiente.</p>
+</div></footer>
+
+<script src="bot.js"></script>
+<script>
+(function(){
+  var B = window.RecepcionBot, bot = null, ocupado = false;
+  var $ = function(id){return document.getElementById(id)};
+  var msgs=$('msgs'), txt=$('txt');
+  var SUG = {
+    dentista:['¿A qué hora abren?','¿Cuánto cuesta una limpieza?','Me duele una muela','Quiero agendar una cita','¿Hacen ortodoncia?'],
+    taller:['¿Cuánto cuesta cambiar el aceite?','Me chillan los frenos','Mi carro no arranca','Quiero agendar una cita','¿Dan garantía?'],
+    aire:['Mi minisplit no enfría','¿Cuánto cuesta instalar uno?','Necesito mantenimiento','Es urgente','Quiero agendar una visita'],
+    estetica:['¿Cuánto cuesta un tinte?','¿Hacen uñas de gel?','Quiero una cita','Peinado para una boda','¿A qué hora abren?']
+  };
+  var giros=$('giros');
+  Object.keys(B.GIROS).forEach(function(k){
+    var g=B.GIROS[k], b=document.createElement('button');
+    b.type='button'; b.className='giro'; b.setAttribute('aria-pressed','false'); b.dataset.k=k;
+    b.innerHTML='<span class="e">'+g.emoji+'</span><span>'+g.etiqueta+'</span>';
+    b.addEventListener('click',function(){elegir(k)});
+    giros.appendChild(b);
+  });
+
+  function add(cls,t){var d=document.createElement('div');d.className='m '+cls;d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d}
+  function elegir(k){
+    bot=B.createBot(k); ocupado=false; msgs.innerHTML='';
+    [].forEach.call(giros.children,function(b){b.setAttribute('aria-pressed',b.dataset.k===k)});
+    $('nombreNeg').textContent=bot.giro.nombre; $('av').textContent=bot.giro.emoji;
+    add('sys','Demostración. Los datos del negocio son de ejemplo.');
+    bot.greet().forEach(function(m){add('bot',m.text)});
+    var s=$('sugs'); s.innerHTML='';
+    SUG[k].forEach(function(t){var b=document.createElement('button');b.type='button';b.className='sug';b.textContent=t;b.addEventListener('click',function(){enviar(t)});s.appendChild(b)});
+    txt.focus({preventScroll:true});
+  }
+  function enviar(t){
+    t=(t||'').trim(); if(!t) return;
+    if(!bot){elegir('dentista')}
+    if(ocupado) return;
+    add('yo',t); txt.value=''; ocupado=true;
+    var tp=document.createElement('div');tp.className='escribiendo';tp.textContent='escribiendo…';msgs.appendChild(tp);msgs.scrollTop=msgs.scrollHeight;
+    setTimeout(function(){
+      tp.remove();
+      bot.reply(t).forEach(function(m){
+        add('bot',m.text);
+        if(m.handoff) add('sys','En el producto real, aquí se te avisaría y la conversación quedaría marcada para que la retomes.');
+        if(m.cita) add('sys ok','En el producto real, esta solicitud te llegaría ordenada con nombre, día y hora.');
+      });
+      ocupado=false;
+    },450);
+  }
+  $('form').addEventListener('submit',function(e){e.preventDefault();enviar(txt.value)});
+  elegir('dentista');
+  msgs.firstChild && (msgs.scrollTop=0);
+})();
+</script>
+</body>
+</html>
